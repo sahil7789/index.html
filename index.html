@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>For Nidhi | Forever</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;500;700&family=Playfair+Display:italic,wght@700&display=swap" rel="stylesheet">
+    <style>
+        :root { --rose: #ff4d6d; --glass: rgba(255, 255, 255, 0.92); }
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            background: radial-gradient(circle, #fff0f3 0%, #ffe5ec 100%);
+            font-family: 'Montserrat', sans-serif;
+            height: 100vh; overflow: hidden;
+            display: flex; justify-content: center; align-items: center;
+        }
+
+        #stage-entry {
+            position: fixed; inset: 0; z-index: 1000;
+            background: linear-gradient(135deg, #ff4d6d, #ff8fa3);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            transition: 1.2s cubic-bezier(0.7, 0, 0.3, 1);
+        }
+        .envelope { font-size: 80px; cursor: pointer; animation: floating 2s infinite ease-in-out; }
+        @keyframes floating { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+
+        .container {
+            width: 92%; max-width: 380px; height: 85vh;
+            background: var(--glass); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border-radius: 40px; position: relative; overflow: hidden;
+            box-shadow: 0 25px 50px rgba(255, 77, 109, 0.2);
+            border: 1.5px solid white; display: flex; flex-direction: column;
+        }
+
+        .screen {
+            position: absolute; inset: 0; padding: 25px;
+            display: none; flex-direction: column; align-items: center; text-align: center;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+        .active { display: flex; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .btn-next {
+            background: var(--rose); color: white; border: none; padding: 16px;
+            border-radius: 20px; width: 100%; font-weight: 700; cursor: pointer;
+            margin-top: auto; box-shadow: 0 8px 15px rgba(255, 77, 109, 0.3);
+            text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+        }
+        .btn-opt {
+            background: white; color: var(--rose); border: 1.5px solid var(--rose);
+            padding: 12px; border-radius: 15px; width: 100%; font-weight: 600;
+            margin-bottom: 10px; cursor: pointer; transition: 0.3s; font-size: 0.85rem;
+        }
+
+        .timer-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; margin: 15px 0; }
+        .t-box { background: white; padding: 12px; border-radius: 15px; border: 1px solid #ffe5ec; }
+        .t-num { font-size: 1.4rem; font-weight: 700; color: var(--rose); display: block; }
+        
+        .wheel {
+            width: 180px; height: 180px; border-radius: 50%; border: 6px solid white;
+            background: conic-gradient(#ff4d6d 0 90deg, #fff 90deg 180deg, #ff4d6d 180deg 270deg, #fff 270deg 360deg);
+            transition: 4s cubic-bezier(0.15, 0, 0.15, 1); margin: 20px 0;
+        }
+
+        .photo-frame { width: 100%; height: 210px; border-radius: 20px; overflow: hidden; border: 4px solid white; margin-bottom: 10px; }
+        .photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .letter-box { font-family: 'Dancing Script', cursive; font-size: 1.25rem; text-align: left; line-height: 1.5; color: #444; height: 240px; overflow-y: auto; }
+        .petal { position: fixed; pointer-events: none; z-index: 2000; animation: fall linear forwards; }
+        @keyframes fall { to { transform: translateY(110vh) rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div id="stage-entry">
+        <div class="envelope" onclick="unlock()">💌</div>
+        <p style="color: white; margin-top: 20px; letter-spacing: 4px;">FOR NIDHI</p>
+    </div>
+
+    <div class="container">
+        <div class="screen active" id="s1">
+            <h2 style="font-family:'Playfair Display'; margin-top: 20px;">The Prelude</h2>
+            <p style="margin: 20px 0; color: #777; font-size: 0.9rem;">Turn up your volume, Nidhi.</p>
+            <div style="font-size: 60px; margin: 30px 0;">🎵</div>
+            <button class="btn-next" onclick="startAll()">Open My Heart</button>
+        </div>
+
+        <div class="screen" id="s2">
+            <h2 style="font-family:'Playfair Display';">Fate's Wheel</h2>
+            <div class="wheel" id="wheel"></div>
+            <p id="spinMsg" style="height: 20px; font-style: italic; color: var(--rose); font-size: 0.9rem;"></p>
+            <button class="btn-next" id="spinBtn" onclick="doSpin()">Spin for a Message</button>
+            <button class="btn-next" id="spinNext" style="display:none;" onclick="next(3)">Our Timeline</button>
+        </div>
+
+        <div class="screen" id="s3">
+            <h2 style="font-family:'Playfair Display';">Since Sep 8, 2025</h2>
+            <div class="timer-grid">
+                <div class="t-box"><span class="t-num" id="days">0</span><p style="font-size:0.6rem; color:#999;">DAYS</p></div>
+                <div class="t-box"><span class="t-num" id="hours">0</span><p style="font-size:0.6rem; color:#999;">HOURS</p></div>
+                <div class="t-box"><span class="t-num" id="mins">0</span><p style="font-size:0.6rem; color:#999;">MINS</p></div>
+                <div class="t-box"><span class="t-num" id="secs">0</span><p style="font-size:0.6rem; color:#999;">SECS</p></div>
+            </div>
+            <button class="btn-next" onclick="next(4)">Pick a Vibe</button>
+        </div>
+
+        <div class="screen" id="s4">
+            <h2 style="font-family:'Playfair Display';">Choose one...</h2>
+            <p style="font-size: 0.8rem; color:#888; margin-bottom: 15px;">Which one defines you best today?</p>
+            <button class="btn-opt" onclick="vibeChoice('I am a Dreamer', 'Then I will be the one to help you reach the stars.')">I am a Dreamer ✨</button>
+            <button class="btn-opt" onclick="vibeChoice('I am a Warrior', 'And that is why I admire your strength every single day.')">I am a Warrior 💪</button>
+            <button class="btn-opt" onclick="vibeChoice('I am a Romantic', 'Good, because I have a lifetime of love waiting for you.')">I am a Romantic ❤️</button>
+            <button class="btn-opt" onclick="vibeChoice('I am Just Nidhi', 'And Just Nidhi is my favorite person in the whole world.')">I am Just Nidhi 🌸</button>
+            
+            <div id="vibeResponse" style="margin-top: 15px; font-family: 'Dancing Script'; font-size: 1.3rem; color: var(--rose); display:none;"></div>
+            <button class="btn-next" id="vibeNext" style="display:none;" onclick="next(5)">See Our Gallery</button>
+        </div>
+
+        <div class="screen" id="s5"><div class="photo-frame"><img src="photo1.jpg"></div><button class="btn-next" onclick="next(6)">Next Photo</button></div>
+        <div class="screen" id="s6"><div class="photo-frame"><img src="photo2.jpg"></div><button class="btn-next" onclick="next(7)">Final Photo</button></div>
+        <div class="screen" id="s7"><div class="photo-frame"><img src="photo3.jpg"></div><button class="btn-next" onclick="next(8)">Read My Letter</button></div>
+
+        <div class="screen" id="s8">
+            <h2 style="font-family:'Playfair Display';">Dearest Nidhi,</h2>
+            <div class="letter-box" id="typingLetter"></div>
+            <button class="btn-next" id="letterBtn" style="display:none;" onclick="next(9)">One Final Question</button>
+        </div>
+
+        <div class="screen" id="s9">
+            <h2 id="finalTitle">Nidhi...</h2>
+            <div id="proposalContent">
+                <p style="margin: 30px 0;">Will you be my Valentine?</p>
+                <button class="btn-next" onclick="finish()">YES</button>
+                <button id="noBtn" style="background:none; border:none; color:#ccc; margin-top:20px;" onmouseover="moveNo()">no</button>
+            </div>
+            <div id="optionSection" style="display:none; width:100%;">
+                <h1 style="font-family:'Dancing Script'; color:var(--rose); font-size: 2.2rem;">I Love You! ❤️</h1>
+                <p style="font-size: 0.8rem; margin: 15px 0;">How are you feeling right now?</p>
+                <button class="btn-opt" onclick="showFinal('Happy')">Purely Happy! 😊</button>
+                <button class="btn-opt" onclick="showFinal('Loved')">So incredibly loved. ❤️</button>
+                <button class="btn-opt" onclick="showFinal('Surprised')">Totally surprised! 😲</button>
+                <button class="btn-opt" onclick="showFinal('Speechless')">Speechless... 😶</button>
+            </div>
+            <div id="finalResult" style="display:none; margin-top: 30px; padding: 20px; background: white; border-radius: 20px; width: 100%;">
+                <p id="resultText" style="font-family: 'Dancing Script'; font-size: 1.4rem; color: #444;"></p>
+                <p style="margin-top: 20px; font-weight: 700; color: var(--rose);">FOREVER YOURS.</p>
+            </div>
+        </div>
+    </div>
+
+    <audio id="bgMusic" loop><source src="music.mp3"></audio>
+
+    <script>
+        const audio = document.getElementById('bgMusic');
+        function unlock() { document.getElementById('stage-entry').style.transform = 'translateY(-110%)'; }
+        function startAll() { audio.play(); next(2); }
+        function next(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById('s'+id).classList.add('active');
+            if(id === 8) startTyping();
+        }
+
+        function vibeChoice(title, response) {
+            const resDiv = document.getElementById('vibeResponse');
+            resDiv.innerText = response;
+            resDiv.style.display = 'block';
+            document.querySelectorAll('#s4 .btn-opt').forEach(b => b.style.display = 'none');
+            document.getElementById('vibeNext').style.display = 'block';
+        }
+
+        function doSpin() {
+            document.getElementById('wheel').style.transform = "rotate(1440deg)";
+            document.getElementById('spinBtn').style.display = 'none';
+            setTimeout(() => {
+                document.getElementById('spinMsg').innerText = "Fate decided: You are my soulmate.";
+                document.getElementById('spinNext').style.display = 'block';
+            }, 4000);
+        }
+
+        function updateTimer() {
+            const start = new Date("September 8, 2025 00:00:00").getTime();
+            const diff = new Date().getTime() - start;
+            document.getElementById('days').innerText = Math.floor(diff / 86400000);
+            document.getElementById('hours').innerText = Math.floor((diff % 86400000) / 3600000);
+            document.getElementById('mins').innerText = Math.floor((diff % 3600000) / 60000);
+            document.getElementById('secs').innerText = Math.floor((diff % 60000) / 1000);
+        }
+        setInterval(updateTimer, 1000);
+
+        function startTyping() {
+            const msg = "Nidhi, since Sep 08, 2025, every day has been better because you are in it. You are my fire and my peace. I hope you know how much I love you.";
+            let i = 0;
+            function type() {
+                if(i < msg.length) { document.getElementById('typingLetter').innerHTML += msg.charAt(i); i++; setTimeout(type, 45); }
+                else { document.getElementById('letterBtn').style.display = 'block'; }
+            }
+            type();
+        }
+
+        function moveNo() {
+            const b = document.getElementById('noBtn'); b.style.position = 'fixed';
+            b.style.left = Math.random() * 70 + '%'; b.style.top = Math.random() * 70 + '%';
+        }
+
+        function finish() {
+            document.getElementById('proposalContent').style.display = 'none';
+            document.getElementById('optionSection').style.display = 'block';
+            startRain();
+        }
+
+        function showFinal(val) {
+            document.getElementById('optionSection').style.display = 'none';
+            document.getElementById('finalResult').style.display = 'block';
+            document.getElementById('resultText').innerText = "I'm so glad you feel " + val + ". You make me the happiest person alive.";
+        }
+
+        function startRain() {
+            setInterval(() => {
+                const p = document.createElement('div'); p.className = 'petal'; p.innerHTML = '❤️';
+                p.style.left = Math.random() * 100 + 'vw'; p.style.top = '-20px';
+                p.style.transition = '5s linear'; document.body.appendChild(p);
+                setTimeout(() => p.style.transform = 'translateY(110vh) rotate(360deg)', 100);
+                setTimeout(() => p.remove(), 5000);
+            }, 300);
+        }
+    </script>
+</body>
+</html>
